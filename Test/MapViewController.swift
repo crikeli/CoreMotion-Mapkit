@@ -23,11 +23,10 @@ class MapViewController: UIViewController,  MKMapViewDelegate, CLLocationManager
     
     override func viewDidLoad() {
 
-//        if let annotates = annotations {
-//            print("HELLOW)")
-//            shakeMapView.addAnnotations(annotates)
-//            
-//        }
+        if let annotates = annotations {
+            shakeMapView.addAnnotations(annotates)
+            
+        }
         
         if manager.deviceMotionAvailable {
             manager.deviceMotionUpdateInterval = 0.02

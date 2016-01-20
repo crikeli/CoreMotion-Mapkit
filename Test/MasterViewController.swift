@@ -132,7 +132,7 @@ class MasterViewController: UITableViewController, CLLocationManagerDelegate, MK
                 let title = object["title"] as! String
                 let price = object.valueForKeyPath("price.data.formatted.with_tax") as! String
                 
-                self.forwardGeocoding(address, title: title, price: price, map: mapController.shakeMapView)
+                self.forwardGeocoding(address, title: title, price: price)
             
 //                
 //                print("Address: \(address)")
@@ -144,7 +144,7 @@ class MasterViewController: UITableViewController, CLLocationManagerDelegate, MK
         }
     }
     
-    func forwardGeocoding(address: String, title: String, price: String, map: MKMapView) {
+    func forwardGeocoding(address: String, title: String, price: String) {
         CLGeocoder().geocodeAddressString(address , completionHandler: { (placemarks, error) in
             if error != nil {
                 print(error)
@@ -168,8 +168,8 @@ class MasterViewController: UITableViewController, CLLocationManagerDelegate, MK
                 // custom modification
                 restaurantPin.title = title
                 restaurantPin.subtitle = price
-//                self.annotationsForMapViewController.append(restaurantPin)
-                map.addAnnotation(restaurantPin)
+                self.annotationsForMapViewController.append(restaurantPin)
+
             }
         })
 }
