@@ -99,6 +99,13 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //The following setup is for setting up the bar button to Checkout
+        let checkoutButton = UIBarButtonItem(title: "Checkout", style: UIBarButtonItemStyle.Plain, target: self, action: "checkout")
+        self.navigationItem.rightBarButtonItem = checkoutButton
+        
+        
+        
         // Do any additional setup after loading the view, typically from a nib.
         self.configureView()
         self.locationManager.delegate = self
@@ -136,6 +143,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     
+    
     // Here is the logic that is responsible for adding items to the cart to simulate ecommerce.
     @IBAction func addToCartTapped(sender: AnyObject) {
         //get the product id
@@ -161,5 +169,66 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             })
         }
     }
+    
+    //MARK: Checkout methods
+    
+    func checkout() {
+        
+        //Create the order data(hard coded for now)
+        let orderParameters = [
+            "customer": ["first_name": "Jon",
+                "last_name":  "Doe",
+                "email":      "jon.doe@gmail.com"],
+            "shipping": "free_shipping",
+            "gateway": "stripe",
+            "bill_to": ["first_name": "Jon",
+                "last_name":  "Doe",
+                "address_1":  "10013 NE 17th St",
+                "address_2":  "Sunnycreek",
+                "city":       "Bellevue",
+                "county":     "Washington",
+                "country":    "US",
+                "postcode":   "98004",
+                "phone":     "6507123124"],
+            "ship_to": "bill_to"
+            ] as [NSObject: AnyObject]
+    
+        
+        //Create an order
+        Moltin.sharedInstance().cart.orderWithParameters(orderParameters, success: {(responseDictionary) -> Void in
+            
+            //Get the Order ID
+            let orderId = (responseDictionary as NSDictionary).valueForKeyPath("result.id") as? String
+            
+            if let oid = orderId {
+                //Hard coded credit card data
+                let paymentParameters = ["data": [
+                    "number": "4242424242424242",
+                    "expiry_month": "02",
+                    "expiry_year": "2018",
+                    "cvv": "123"
+                ]] as [NSObject: AnyObject]
+                
+                //processing the payment
+                Moltin.sharedInstance().checkout.paymentWithMethod("purchase", order: oid, parameters: paymentParameters, success: { (responseDictionary) -> Void in
+                    
+                        //Display a message to the user that checkout is successfull
+                    let alert = UIAlertController(title: "Order Completed", message: "Enjoy your meal!",  preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    alert.addAction(UIAlertAction(title:"I Sure Will!", style: UIAlertActionStyle.Default, handler: nil))
+                    
+                    self.presentViewController(alert, animated: true, completion:nil )
+                    
+                    }, failure: {(responseDictionary, error) -> Void in
+                        print("Could not process the payment")
+                })
+            }
+                
+            }) { (responseDictionary, error) -> Void in
+                print("Order creation Failed")
+        
+        
+    }
+    
 }
-
+}
