@@ -11,8 +11,13 @@ import MapKit
 import CoreLocation
 import AddressBookUI
 import Moltin
+import FontAwesome_swift
+import UberRides
 
 class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
+    
+    
+    @IBOutlet weak var productImageView: UIImageView!
 
     @IBOutlet weak var detailTitleLabel: UILabel!
 
@@ -20,11 +25,12 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     @IBOutlet weak var detailPriceLabel: UILabel!
     
+    @IBOutlet weak var detailAvailabilityLabel: UILabel!
+    
     @IBOutlet weak var detailAddressLabel: UILabel!
     
     @IBOutlet weak var mapView: MKMapView!
     
-//    var restaurantPin: MKPointAnnotation?
     
     let locationManager = CLLocationManager()
     
@@ -39,7 +45,8 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         // Update the user interface for the detail item.
         if let detail = self.detailItem {
             
-                //Set the product title
+            
+            //Set the product title
                 let productTitle = detail["title"] as? String
             if let title = productTitle {
                 self.detailTitleLabel?.text = title
@@ -51,17 +58,36 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                 self.detailDescriptionLabel?.text = desc
             }
             
+            
+            //Set the availability label
+            let productAvailability = detail["stock_level"] as? Int
+            if let avlbl = productAvailability {
+                self.detailAvailabilityLabel?.text = "\(avlbl)"
+            }
+            
                 //Set the price label
                 let productPrice = detail.valueForKeyPath("price.data.formatted.with_tax") as? String
             if let price = productPrice {
                 self.detailPriceLabel?.text = price
             }
             
+            //Getting the image associated with the products
+            var imageUrl = ""
+            
+            if let images = detail.objectForKey("images") as? NSArray {
+                if (images.firstObject != nil) {
+                    imageUrl = images.firstObject?.valueForKeyPath("url.https") as! String
+                }
+                
+            }
+            
+            productImageView?.setImageWithURL(NSURL(string: imageUrl)!)
+            
                 //Set the address label
                 let productAddress = detail["address"] as? String
             if let addr = productAddress {
                 self.detailAddressLabel?.text = addr
-                
+            
                 
                 //Geocoding function (forward)
                 //completion handlers return an array of placemarkers
@@ -86,6 +112,15 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                             let restaurantPin = MKPointAnnotation()
                             restaurantPin.coordinate = destination
                             self.mapView.addAnnotation(restaurantPin)
+                            
+                            
+                            //Request Ride Button
+                            let button = RequestButton()
+                            self.view.addSubview(button)
+                            
+                            // Swift
+                            button.setPickupLocation(latitude: "\(location!.coordinate.latitude)", longitude: "\(location!.coordinate.longitude)")
+                            button.setDropoffLocation(latitude: "\(coordinate!.latitude)", longitude: "\(coordinate!.longitude)")
                         }
                     })
                 }
@@ -99,6 +134,8 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
         
         //The following setup is for setting up the bar button to Checkout
         let checkoutButton = UIBarButtonItem(title: "Checkout", style: UIBarButtonItemStyle.Plain, target: self, action: "checkout")
@@ -132,13 +169,14 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
         
         //zoom range
-        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15))
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08))
         
         //animation
         self.mapView.setRegion(region, animated: true)
         
         //since we have a zoomed view, we stop updating the location
         self.locationManager.stopUpdatingLocation()
+        
         
     }
     
@@ -212,7 +250,8 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                 //processing the payment
                 Moltin.sharedInstance().checkout.paymentWithMethod("purchase", order: oid, parameters: paymentParameters, success: { (responseDictionary) -> Void in
                     
-                        //Display a message to the user that checkout is successfull
+                    
+                    //Display a message to the user that checkout is successfull
                     let alert = UIAlertController(title: "Order Completed", message: "Enjoy your meal!",  preferredStyle: UIAlertControllerStyle.Alert)
                     
                     alert.addAction(UIAlertAction(title:"I Sure Will!", style: UIAlertActionStyle.Default, handler: nil))

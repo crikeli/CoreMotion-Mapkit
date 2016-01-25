@@ -14,14 +14,20 @@ PODS:
   - AFNetworking/Serialization (3.0.4)
   - AFNetworking/UIKit (3.0.4):
     - AFNetworking/NSURLSession
+  - FontAwesome.swift (0.7.0)
   - Moltin (1.0.2):
     - AFNetworking
+  - UberRides (0.2.0)
 
 DEPENDENCIES:
+  - FontAwesome.swift
   - Moltin
+  - UberRides
 
 SPEC CHECKSUMS:
   AFNetworking: a0075feb321559dc78d9d85b55d11caa19eabb93
+  FontAwesome.swift: c6e30a1a81716306ff9c81f2d38dda88ac5b8294
   Moltin: 5758d950db2c2cdec7a0c4d2f4e3f846882bd0a9
+  UberRides: 3a8966e19c77bcccaca5e9d916089c9263bd6e35
 
 COCOAPODS: 0.39.0

@@ -82,6 +82,7 @@ class MasterViewController: UITableViewController, CLLocationManagerDelegate, MK
         //
         let object = objects[indexPath.row] as! NSDictionary
         cell.textLabel!.text = object["title"] as? String
+        
         return cell
     }
 
@@ -124,10 +125,13 @@ class MasterViewController: UITableViewController, CLLocationManagerDelegate, MK
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
+            
+            
         } else if segue.identifier == "mapSegue" {
             let mapController = segue.destinationViewController as! MapViewController
+            
             for object in objects {
-//                print("THIS IS AN OBJECTS ******************** \(object)")\
+                //print("THIS IS AN OBJECTS ******************** \(object)")
                 let address = object["address"] as! String
                 let title = object["title"] as! String
                 let price = object.valueForKeyPath("price.data.formatted.with_tax") as! String

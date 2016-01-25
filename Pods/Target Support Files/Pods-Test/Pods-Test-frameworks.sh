@@ -85,9 +85,13 @@ strip_invalid_archs() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-Test/AFNetworking.framework"
+  install_framework "Pods-Test/FontAwesome_swift.framework"
   install_framework "Pods-Test/Moltin.framework"
+  install_framework "Pods-Test/UberRides.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-Test/AFNetworking.framework"
+  install_framework "Pods-Test/FontAwesome_swift.framework"
   install_framework "Pods-Test/Moltin.framework"
+  install_framework "Pods-Test/UberRides.framework"
 fi
