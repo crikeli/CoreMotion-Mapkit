@@ -32,6 +32,8 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet weak var mapView: MKMapView!
     
     
+    
+    
     let locationManager = CLLocationManager()
     
     var detailItem: AnyObject? {
@@ -265,8 +267,6 @@ class DetailViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                 
             }) { (responseDictionary, error) -> Void in
                 print("Order creation Failed")
-        
-        
     }
     
 }
